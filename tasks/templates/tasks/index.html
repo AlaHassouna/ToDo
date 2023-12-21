@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To Do</title>
+    <script src="https://unpkg.com/htmx.org@1.9.9"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/d439821875.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&family=Questrial&family=Rubik+Doodle+Shadow&family=Urbanist:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+<body class="container mx-auto mt-5">
+
+<h1 style="font-family :Rubik Doodle Shadow;">To Do Project</h1>
+
+<div class="row">
+    <div class="col-4">
+        <nav id="collections" class="list-group">
+            {% for collection in collections %}
+            {% include "tasks/collection.html" with collection=collection %}
+            {% endfor %}
+        </nav>
+        <form method="post" class="d-flex gap-2 mt-2">
+            {% csrf_token %}
+
+            <input type="text" class="form-control" name="collection-name" id="collection-name" placeholder="Collection..." >
+            <button onclick="validerCollection()" class="btn btn-outline-success" type="submit" hx-post="{% url 'add-collection' %}" hx-target="#collections" hx-swap="beforeend" >
+                Submit
+            </button>
+        </form>
+    </div>
+    <section class="col-8" >
+        <form method='post' class="d-flex gap-2" >
+            {% csrf_token %}
+            <input type="text" name="task-description" id="task-description"placeholder="Tâche..." class="form-control" >
+            <button onclick="validerTask()"
+                    type="submit"
+                    hx-post="{% url 'add-task' %}"
+                    hx-target="#tasks"
+                    hx-vals='js:{collection : getCollectionFromURL()}'
+                    hx-swap="beforeend" class="btn btn-outline-success">
+                Ajouter
+            </button>
+        </form>
+
+
+        <section id="tasks-container">
+
+            {% include "tasks/tasks.html" with tasks=tasks collection=collection %}
+
+        </section>
+    </section>
+</div>
+<script>
+        document.body.addEventListener("htmx:responseError",function(event){
+        alert(event.detail.xhr.responseText);
+        })
+
+        function getCollectionFromURL(){
+            let url= new URL(window.location.href);
+            let searchParams = url.searchParams;
+            return searchParams.get("collection");
+        }
+
+     function validerCollection() {
+            // Ajoutez ici la logique de validation du formulaire
+
+            // Attendre une seconde (1000 millisecondes) avant de vider le champ de saisie
+            setTimeout(function() {
+                document.getElementById("collection-name").value = "";
+            }, 0.0000001);
+        }
+        function validerTask() {
+            // Ajoutez ici la logique de validation du formulaire
+
+            // Attendre une seconde (1000 millisecondes) avant de vider le champ de saisie
+            setTimeout(function() {
+                document.getElementById("task-description").value = "";
+            }, 0.0000001);
+        }
+
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+</html>

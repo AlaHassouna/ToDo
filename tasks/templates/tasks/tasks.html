@@ -1,0 +1,12 @@
+<div  class="d-flex flex-column gap-2 mt-2" id="tasks">
+
+{% for task in tasks %}
+{% include 'tasks/task.html' with task=task %}
+{% endfor %}
+</div>
+    {% if collection.slug != "_Default" %}
+<span class="badge bg-warning mt-4">
+    <a href="{% url 'delete-collection' collection.pk %}" style="text-decoration : none;color : black;">Supprimer la collection</a>
+</span>
+
+{% endif %}
